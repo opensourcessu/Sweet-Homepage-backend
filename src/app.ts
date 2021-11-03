@@ -1,13 +1,16 @@
 import express from "express";
+import moment from "moment";
+import { port } from "./settings";
 
 const app = express();
-const port = 8000;
 
 app.use(express.json());
 
 app.get("/", function (req, res) {
+    const now_iso = moment().toISOString();
+
     res.status(200).json({
-        msg: "Hello"
+        time: now_iso
     });
 });
 
