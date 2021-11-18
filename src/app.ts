@@ -1,8 +1,8 @@
 import express from "express";
 import moment from "moment";
 import { Client } from "pg";
-import { get_user_controller } from "./controlls/users.controll";
-import { get_user_router } from "./routes/users.route";
+import { get_user_controller, get_todo_controller } from "./controlls";
+import { get_user_router, get_todo_router } from "./routes";
 import { port, db_config } from "./settings";
 
 const app = express();
@@ -19,6 +19,7 @@ app.get("/", function (req, res) {
 });
 
 app.use("/users", get_user_router(get_user_controller(pg_client)));
+app.use("/todo", get_todo_router(get_todo_controller(pg_client)));
 
 pg_client.connect();
 
