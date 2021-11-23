@@ -1,6 +1,6 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import moment from "moment";
-import { secret } from "../settings";
+import { secret, token_exp } from "../settings";
 
 export enum tokenType { access = "access", refresh = "refresh" };
 
@@ -11,7 +11,7 @@ export function verify_token(token: string, token_type: tokenType): number {
 
 export function create_token(user_id: number, token_type: tokenType, now?: number): string {
     const now_sec = now === undefined ? moment().unix() : now;
-    const exp = now_sec + (token_type === tokenType.access ? 60 * 5 : 180 * 24 * 60 *60);
+    const exp = now_sec + (token_type === tokenType.access ? token_exp.access : token_exp.refresh);
     const token = jwt.sign({
         exp: exp,
         sub: token_type,

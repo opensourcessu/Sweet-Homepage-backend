@@ -28,7 +28,7 @@ export class todoService {
     }
 
     public async list(user_id: number) {
-        const query = "SELECT ticket_id, subject, content, deadline, status, create_dt, update_dt FROM todo_lists WHERE user_id = $1 AND delete_dt IS NULL;";
+        const query = "SELECT ticket_id, subject, content, deadline, status, create_dt, update_dt FROM todo_lists WHERE user_id = $1 AND delete_dt IS NULL ORDER BY ticket_id;";
         const result = await this.pg_client.query<ticketQueryResDTO>(query, [user_id]);
 
         return {
@@ -52,7 +52,7 @@ export class todoService {
         const now = moment().toISOString();
 
         const query = "INSERT INTO todo_lists (user_id, subject, content, deadline, create_dt, update_dt) VALUES ($1, $2, $3, $4, $5, $6) RETURNING ticket_id, subject, content, deadline, status, create_dt, update_dt;";
-        const result = await this.pg_client.query<ticketQueryResDTO>(query, [user_id, ticket_data.subject, ticket_data.content, ticket_data.deadline.toISOString, now, now]);
+        const result = await this.pg_client.query<ticketQueryResDTO>(query, [user_id, ticket_data.subject, ticket_data.content, ticket_data.deadline.toISOString(), now, now]);
 
         return result.rows[0];
     }
@@ -63,11 +63,11 @@ export class todoService {
         const updating_properties = [];
         const updating_data = [];
 
-        var i = 1;
+        let i = 1;
         for (const [key, value] of Object.entries(ticket_data)) {
             if (properties.includes(key) && value !== undefined) {
                 const val = value instanceof moment ? (<Moment>value).toISOString() : value;
-                updating_properties.push(`${key} = $${i++})`);
+                updating_properties.push(`${key} = $${i++}`);
                 updating_data.push(val);
             }
         }

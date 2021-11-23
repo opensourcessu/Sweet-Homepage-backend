@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import moment from "moment";
 import { Client } from "pg";
 import { todoService } from "./services/todo.service";
@@ -10,6 +11,7 @@ const app = express();
 const pg_client = new Client(db_config);
 const todo_service = new todoService(pg_client);
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/", function (req, res) {

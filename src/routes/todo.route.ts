@@ -16,7 +16,7 @@ export function get_todo_router(controller: todo_controller) {
     router.route("/")
         .get(controller.list)
         .post(controller.create);
-    router.route("/:ticket_id(\d+)")
+    router.route("/:ticket_id(\\d+)")
         .get(controller.get)
         .patch(controller.modify)
         .delete(controller.remove);

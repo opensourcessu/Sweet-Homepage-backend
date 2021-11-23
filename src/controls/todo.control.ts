@@ -52,19 +52,19 @@ export function get_todo_controller(todo_service: todoService) {
 
         const subject: string = req.body.subject;
         const content: string = req.body.content;
-        var deadline: string = req.body.deadline;
+        let deadline: string = req.body.deadline;
 
         const subj_format_test = subj_format.test(subject);
         const deadline_format_test = deadline_format.test(deadline);
 
-        if (subj_format_test || deadline_format_test) {
+        if (!subj_format_test || !deadline_format_test) {
             // request data format check and generate error message
             const detail_obj: { subject?: string; deadline?: string; } = {};
 
-            if (subj_format_test)
+            if (!subj_format_test)
                 detail_obj.subject = subj_format.toString();
 
-            if (deadline_format_test)
+            if (!deadline_format_test)
                 detail_obj.deadline = deadline_format.toString();
 
             res.status(409).json({
@@ -101,7 +101,7 @@ export function get_todo_controller(todo_service: todoService) {
             status: req.body.status === undefined || typeof(req.body.status) === "number"
         }
 
-        if (Object.values(req_check).every((val) => val)) {
+        if (!Object.values(req_check).every((val) => val)) {
             res.status(409).json(req_check);
             return;
         }
@@ -109,7 +109,7 @@ export function get_todo_controller(todo_service: todoService) {
         const result = await todo_service.modify(user_id, ticket_id, {
             subject: req.body.subject,
             content: req.body.content,
-            deadline: moment.utc(req.body.deadline),
+            deadline: req.body.deadline !== undefined ? moment.utc(req.body.deadline) : undefined,
             status: req.body.status
         });
 

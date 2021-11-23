@@ -13,3 +13,8 @@ export const db_config = {
     password: process.env.DB_PASSWORD,
     port: parseInt(<string>process.env.DB_PORT)
 };
+
+export const token_exp = {
+    access: 60 * 5,
+    refresh: 60 * 60 * 24 * 180
+};
