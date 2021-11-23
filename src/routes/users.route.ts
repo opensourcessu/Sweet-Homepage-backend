@@ -1,5 +1,4 @@
 import { Router, RequestHandler } from "express";
-import { get_user_controller } from "../controlls/users.controll";
 import { set_user_id_middleware } from "../middlewares/auth.middleware";
 
 interface user_controller {

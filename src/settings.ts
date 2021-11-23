@@ -4,7 +4,7 @@ dotenv.config();
 
 export const port = process.env.PORT;
 
-export const secret: string = process.env.SECRET === undefined ? "" : process.env.SECRET;
+export const secret: string = process.env.SECRET === undefined ? "secret" : process.env.SECRET;
 
 export const db_config = {
     user: process.env.DB_USERNAME,

@@ -1,7 +1,7 @@
 import moment from "moment";
 import { Client } from "pg";
 import { Request, Response } from "express";
-import { create_access_token } from "../services/authtoken.service";
+import { create_token, tokenType } from "../services/authtoken.service";
 
 export function get_user_controller(pg_client: Client) {
 
@@ -18,7 +18,6 @@ export function get_user_controller(pg_client: Client) {
     }
 
     async function login(req: Request, res: Response) {
-        const now_sec = moment().unix();
         const { id, password } = req.body;
         const query = "SELECT user_id, name, create_dt, update_dt FROM sw_users WHERE login_id = $1 AND password = $2 AND delete_dt IS NULL";
 
@@ -31,12 +30,18 @@ export function get_user_controller(pg_client: Client) {
             res.status(404).end();
         } else {
             const user = result.rows[0];
-            const token = create_access_token(user.user_id);
+            const access_token = create_token(user.user_id, tokenType.access);
+            const refresh_token = create_token(user.user_id, tokenType.refresh);
 
             res.status(200).json({
-                access_token: token
+                access_token,
+                refresh_token
             });
         }
+    }
+
+    async function refresh(req: Request, res: Response) {
+        
     }
 
     async function info(req: Request, res: Response) {
