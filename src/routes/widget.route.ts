@@ -1,25 +1,23 @@
 import { Router, RequestHandler } from "express";
 import { set_user_id_middleware } from "../middlewares/auth.middleware";
 
-interface todoController {
-    list: RequestHandler;
-    get: RequestHandler;
+interface widgetController {
+    widget_list: RequestHandler;
     create: RequestHandler;
     modify: RequestHandler;
     remove: RequestHandler;
 }
 
-export function get_todo_router(controller: todoController) {
+export function get_widget_router(controller: widgetController) {
     const router = Router();
 
     router.use(set_user_id_middleware);
     router.route("/")
-        .get(controller.list)
+        .get(controller.widget_list)
         .post(controller.create);
-    router.route("/:ticket_id(\\d+)")
-        .get(controller.get)
+    router.route("/:widget_id(\\d+)")
         .patch(controller.modify)
         .delete(controller.remove);
-    
+
     return router;
 }
