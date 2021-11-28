@@ -25,8 +25,8 @@ app.get("/", function (req, res) {
 });
 
 app.use("/users", get_user_router(get_user_controller(pg_client)));
-app.use("/todo", get_todo_router(get_todo_controller(todo_service)));
-app.use("/widget", get_widget_router(get_widget_controller(widget_service)));
+app.use("/tasks", get_todo_router(get_todo_controller(todo_service)));
+app.use("/widgets", get_widget_router(get_widget_controller(widget_service)));
 
 pg_client.connect();
 

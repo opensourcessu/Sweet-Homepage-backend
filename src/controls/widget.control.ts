@@ -3,6 +3,17 @@ import { Request, Response } from "express";
 import { widgetService } from "../services/widget.service";
 
 export function get_widget_controller(widget_service: widgetService) {
+
+    async function widget_type_list(req: Request, res: Response) {
+        const result = await widget_service.type_list();
+
+        res.status(200).json({
+            widget_types: result
+        });
+
+        return;
+    }
+
     async function widget_list(req: Request, res: Response) {
         const user_id = req.user_id;
         if (user_id === undefined) {
@@ -27,8 +38,8 @@ export function get_widget_controller(widget_service: widgetService) {
             widget_type_id: typeof(req.body.widget_type_id) === "number",
             pos_x: typeof(req.body.pos_x) === "number",
             pos_y: typeof(req.body.pos_y) === "number",
-            size_x: typeof(req.body.size_x) === "number",
-            size_y: typeof(req.body.size_y) === "number",
+            size_x: typeof(req.body.size_x) === "number" && req.body.size_x > 0,
+            size_y: typeof(req.body.size_y) === "number" && req.body.size_y > 0,
             raw_data: req.body.raw_data === undefined || typeof(req.body.raw_data) === "string",
         }
 
@@ -46,12 +57,7 @@ export function get_widget_controller(widget_service: widgetService) {
             raw_data: req.body.raw_data,
         });
 
-        if (result === undefined) {
-            res.status(409).end();
-            return;
-        }
-
-        res.status(201).json(result);
+        res.status("overlapped" in result ? 409 : 201).json(result);
         return;
     }
 
@@ -68,8 +74,8 @@ export function get_widget_controller(widget_service: widgetService) {
             widget_id: !isNaN(widget_id),
             pos_x: typeof(req.body.pos_x) === "number",
             pos_y: typeof(req.body.pos_y) === "number",
-            size_x: typeof(req.body.size_x) === "number",
-            size_y: typeof(req.body.size_y) === "number",
+            size_x: typeof(req.body.size_x) === "number" && req.body.size_x > 0,
+            size_y: typeof(req.body.size_y) === "number" && req.body.size_y > 0,
             raw_data: req.body.raw_data === undefined || typeof(req.body.raw_data) === "string",
         }
 
@@ -93,7 +99,7 @@ export function get_widget_controller(widget_service: widgetService) {
             return;
         }
 
-        res.status(200).json(result);
+        res.status("overlapped" in result ? 409 : 200).json(result);
         return;
     }
 
@@ -119,6 +125,7 @@ export function get_widget_controller(widget_service: widgetService) {
     }
 
     return {
+        widget_type_list,
         widget_list,
         create,
         modify,

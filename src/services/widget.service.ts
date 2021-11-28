@@ -27,6 +27,11 @@ interface widgetQueryResDTO {
     raw_data: string;
 }
 
+interface widgetTypeQueryResDTO {
+    widget_type_id: number;
+    description: string;
+}
+
 // widget에 timestamp 추가
 
 export class widgetService {
@@ -93,6 +98,13 @@ export class widgetService {
         return overlapped_widgets;
     }
 
+    public async type_list() {
+        const query = "SELECT widget_type_id, description FROM widget_types ORDER BY widget_type_id;";
+        const result = await this.pg_client.query<widgetTypeQueryResDTO>(query);
+
+        return result.rows;
+    }
+
     public async list(user_id: number) {
         const query = "SELECT widget_id, widget_type_id, pos_x, pos_y, size_x, size_y, raw_data FROM widgets WHERE user_id = $1 ORDER BY widget_id;";
         const result = await this.pg_client.query<widgetQueryResDTO>(query, [user_id]);
@@ -117,8 +129,9 @@ export class widgetService {
             };  
         }
 
-        const query = "INSERT INTO widgets (widget_type_id, pos_x, pos_y, size_x, size_y, raw_data) VALUES ($1, $2, $3, $4, $5, $6) RETURNING widget_id, widget_type_id, pos_x, pos_y, size_x, size_y, raw_data;";
+        const query = "INSERT INTO widgets (user_id, widget_type_id, pos_x, pos_y, size_x, size_y, raw_data) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING widget_id, widget_type_id, pos_x, pos_y, size_x, size_y, raw_data;";
         const result = await this.pg_client.query<widgetQueryResDTO>(query, [
+            user_id,
             widget_data.widget_type_id,
             widget_data.location.pos[0],
             widget_data.location.pos[1],
@@ -131,7 +144,7 @@ export class widgetService {
     }
 
     public async modify(user_id: number, widget_id: number, location: widgetLocation, raw_data?: string) {
-        // 검사 및 이동, 내용 변경. transaction 설정 필요
+        // transaction 설정 필요
         const old_widgets = (await this.list(user_id)).widgets;
 
         const target_widget_index = old_widgets.findIndex(val => val.widget_id === widget_id);
