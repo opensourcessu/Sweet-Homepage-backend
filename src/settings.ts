@@ -15,6 +15,6 @@ export const db_config = {
 };
 
 export const token_exp = {
-    access: 60 * 5,
+    access: 60 * 60 * 24 * 180, //60 * 5,
     refresh: 60 * 60 * 24 * 180
 };

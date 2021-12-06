@@ -121,7 +121,7 @@ export class widgetService {
         // transaction 설정 필요
         const old_widgets = (await this.list(user_id)).widgets;
 
-        const overlapped_widgets = this.check_overlap(old_widgets, widget_data);
+        const overlapped_widgets: widgetDTO[] = []; //this.check_overlap(old_widgets, widget_data);
 
         if (overlapped_widgets.length !== 0) {
             return {
@@ -156,10 +156,10 @@ export class widgetService {
 
         old_widgets.splice(target_widget_index, 1);
 
-        const overlapped_widgets = this.check_overlap(old_widgets, {
-            widget_type_id: widget_type_id,
-            location: location
-        });
+        const overlapped_widgets: widgetDTO[] = []; // = this.check_overlap(old_widgets, {
+        //     widget_type_id: widget_type_id,
+        //     location: location
+        // });
 
         if (overlapped_widgets.length !== 0) {
             return {
