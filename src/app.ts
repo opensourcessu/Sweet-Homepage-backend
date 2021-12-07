@@ -18,7 +18,9 @@ const page_setting_service = new pageSettingService(pg_client);
 app.use(cors({
     origin: true
 }));
-app.use(express.json());
+app.use(express.json({
+    limit: "50MB"
+}));
 
 app.get("/", function (req, res) {
     const now_iso = moment().toISOString();

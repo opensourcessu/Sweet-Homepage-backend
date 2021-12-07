@@ -8,13 +8,19 @@ export function get_user_controller(pg_client: Client) {
     async function signup(req: Request, res: Response) {
         const { id, password, name } = req.body;
         const now = moment().toISOString();
-        const query = "INSERT INTO sw_users (login_id, name, password, create_dt, update_dt) VALUES ($1, $2, $3, $4, $5);";
+        const query = "INSERT INTO sw_users (login_id, name, password, create_dt, update_dt) VALUES ($1, $2, $3, $4, $5) RETURNING user_id;";
         
         const result = await pg_client.query(query, [id, name, password, now, now]);
 
         console.log({ result });
 
-        res.status(201).end();
+        const user = result.rows[0];
+        const access_token = create_token(user.user_id, tokenType.access);
+        const refresh_token = create_token(user.user_id, tokenType.refresh);
+        res.status(201).json({
+            access_token,
+            refresh_token
+        });
     }
 
     async function login(req: Request, res: Response) {
